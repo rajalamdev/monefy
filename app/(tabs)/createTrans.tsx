@@ -90,7 +90,7 @@ export default function CreateTransScreen() {
       </TouchableOpacity>
       <ThemedView>
         <ThemedText className='mb-1'>Amount</ThemedText>
-        <ThemedView className={`flex-row items-center h-12 mb-4 px-4 ${currentColor === "dark" && "bg-[#242424]"} border border-[#7B7B7B] rounded`}>
+        <ThemedView className={`flex-row items-center h-12 mb-4 px-4 ${currentColor === "dark" && "bg-[#222]"} border border-[#7B7B7B] rounded`}>
           <Ionicons name='cash-outline' color={`${currentColor === "dark" ? "white" : "black"}`} size={20} />
           <TextInput 
               value={transaction.amount === "" ? "" : String(transaction.amount)}
@@ -106,7 +106,7 @@ export default function CreateTransScreen() {
       </ThemedView>
       <ThemedView>
         <ThemedText className='mb-1'>Category</ThemedText>
-        <ThemedView className={`flex-row items-center h-12 mb-4 px-4 ${currentColor === "dark" && "bg-[#242424]"} border border-[#7B7B7B] rounded`}>
+        <ThemedView className={`flex-row items-center h-12 mb-4 px-4 ${currentColor === "dark" && "bg-[#222]"} border border-[#7B7B7B] rounded`}>
           <Ionicons name='apps-outline' color={`${currentColor === "dark" ? "white" : "black"}`} size={20} />
           <TextInput 
           value={transaction.category}
@@ -122,7 +122,7 @@ export default function CreateTransScreen() {
       </ThemedView>
       <ThemedView>
         <ThemedText className='mb-1'>Description</ThemedText>
-        <ThemedView className={`flex-row items-center h-20 mb-8 px-4 ${currentColor === "dark" && "bg-[#242424]"} border border-[#7B7B7B] rounded`}>
+        <ThemedView className={`flex-row items-center h-20 mb-8 px-4 ${currentColor === "dark" && "bg-[#222]"} border border-[#7B7B7B] rounded`}>
           <Ionicons name='create-outline' color={`${currentColor === "dark" ? "white" : "black"}`} size={20} />
           <TextInput 
           value={transaction.description}

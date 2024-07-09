@@ -21,7 +21,7 @@ export default function TransactionScreen(){
             <ThemedView className="pt-10 flex-row items-center gap-4 px-4">
                 <Ionicons 
                     onPress={() => setDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))} 
-                    name="chevron-back-outline" size={25} color={`${currentColor === "dark" ? "white" : "black"}`} 
+                    name="chevron-back" size={25} color={`${currentColor === "dark" ? "white" : "black"}`} 
                 />
                 <ThemedText>{currentDate.toLocaleDateString("en-US",options)}</ThemedText>
                 <Ionicons 
@@ -40,7 +40,7 @@ export default function TransactionScreen(){
             }}
             className="mt-4 px-4"
             >
-                 <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#eee]"} px-4 py-4 rounded-lg mb-2`}>
+                 <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
                     <View className='flex-1'>
                         <ThemedText className="font-medium">Grocery</ThemedText>
                         <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>24 August 2004</ThemedText>

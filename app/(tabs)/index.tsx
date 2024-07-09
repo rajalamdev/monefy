@@ -38,7 +38,7 @@ export default function WelcomeScreen(){
                 <ThemedText className="text-4xl font-bold px-4 mb-2">Manage your money with us.</ThemedText>
                 <ThemedText className="text-[#A6A6A6] px-4 mb-4">Spending methods and financial management through digital banks</ThemedText>
                 <TouchableOpacity 
-                    onPress={() => router.replace("/home")}
+                    onPress={() => router.navigate("/login")}
                     className="bg-green-400 items-center justify-center h-12 rounded w-[90%] mx-auto mt-4 mb-10"
                 >
                     <Text className="font-semibold">Get Started</Text>

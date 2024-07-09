@@ -24,13 +24,13 @@ export default function HomeScreen() {
         <ThemedView className='flex-row justify-between px-4 pt-12 pb-8  items-center' style={{
           flex: 1
         }}>
-          <Ionicons onPress={() => Appearance.setColorScheme(currentColor === "dark" ? "light" : "dark")} name='apps-outline' size={25} color={currentColor === "dark" ? "white" : "black"} />
+          <Ionicons onPress={() => Appearance.setColorScheme(currentColor === "dark" ? "light" : "dark")} name='moon-outline' size={25} color={currentColor === "dark" ? "white" : "black"} />
           <ThemedText>Hello, Raj Alam!</ThemedText>
           <Ionicons name='notifications-outline' size={25} color={currentColor === "dark" ? "white" : "black"} />
         </ThemedView>
         <ThemedView className='flex-row px-4 pb-4 gap-2'>
           {filter.map(item => (
-            <TouchableOpacity onPress={() => setCurrentFilter(item)} className={`${item === currentFilter ? "bg-green-400" : "border border-green-400"} py-2 px-4 flex-1 items-center rounded-lg`}>
+            <TouchableOpacity onPress={() => setCurrentFilter(item)} className={`${item === currentFilter ? "bg-green-400" : currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} py-2 px-4 flex-1 items-center rounded-lg`}>
               <ThemedText className={`${item === currentFilter && "text-black"} text-sm`}>{item}</ThemedText>
             </TouchableOpacity>
           ))}
@@ -58,18 +58,24 @@ export default function HomeScreen() {
           </ImageBackground>
         </ThemedView>
         <ThemedView className='px-4 flex-row gap-4'>
-          <ThemedView className={`${currentColor === "dark" ? "bg-[#141414]" : "bg-[#eee]"} rounded-lg p-4 flex-1`}>
-            <ThemedText className='text-green-400 font-medium'>Income</ThemedText>
-            <ThemedText>Rp. 20.000.000</ThemedText>          
+          <ThemedView className={`${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} rounded-lg p-4 flex-1 flex-row items-center`}>
+            <Ionicons name='card-outline' size={25} color={currentColor === "dark" ? "#4ade80" : "#4ade80"} />
+            <View className='pl-2'>
+              <ThemedText className='font-medium'>Income</ThemedText>
+              <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Rp. 20.000.000</ThemedText>          
+            </View>
           </ThemedView>
-          <ThemedView className={`${currentColor === "dark" ? "bg-[#141414]" : "bg-[#eee]"} rounded-lg p-4 flex-1`}>
-            <ThemedText className='text-red-400 font-medium'>Expenses</ThemedText>
-            <ThemedText>Rp. 20.000.000</ThemedText>          
+          <ThemedView className={`${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} rounded-lg p-4 flex-1 flex-row items-center`}>
+            <Ionicons name='wallet-outline' size={25} color={currentColor === "dark" ? "red" : "#ef4444"} />
+            <View className='pl-2'>
+              <ThemedText className='font-medium'>Expense</ThemedText>
+              <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Rp. 20.000.000</ThemedText>          
+            </View>
           </ThemedView>
         </ThemedView>
         <ThemedView className='px-4 pt-8'>
           <ThemedText className='font-medium mb-2'>Recent Activity</ThemedText>
-          <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#eee]"} px-4 py-4 rounded-lg mb-2`}>
+          <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
               <View className='flex-1'>
                   <ThemedText className="font-medium">Grocery</ThemedText>
                   <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>24 August 2004</ThemedText>
@@ -79,7 +85,7 @@ export default function HomeScreen() {
                   <ThemedText className='text-green-400'>+25.000</ThemedText>
               </View>
           </ThemedView>
-          <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#eee]"} px-4 py-4 rounded-lg mb-2`}>
+          <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
                 <View className='flex-1'>
                     <ThemedText className="font-medium">Grocery</ThemedText>
                     <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>24 August 2004</ThemedText>

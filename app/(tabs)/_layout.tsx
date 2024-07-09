@@ -10,7 +10,7 @@ import { useSegments } from 'expo-router';
 export default function TabLayout() {
   const segments = useSegments()
   const colorScheme = useColorScheme();
-  const pagesToHideTabBarWhenFocused = ['report', 'index', undefined]
+  const pagesToHideTabBarWhenFocused = ['report', 'index', undefined, "login", "register"]
   
   return (
     <Tabs
@@ -64,6 +64,20 @@ export default function TabLayout() {
         name="createTrans"
         options={{
           title: 'Create',
+          tabBarButton: () => null,
+        }}
+      />
+      <Tabs.Screen
+        name="login"
+        options={{
+          title: 'Login',
+          tabBarButton: () => null,
+        }}
+      />
+      <Tabs.Screen
+        name="register"
+        options={{
+          title: 'Register',
           tabBarButton: () => null,
         }}
       />
