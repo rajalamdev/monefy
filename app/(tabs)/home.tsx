@@ -42,28 +42,28 @@ export default function HomeScreen() {
             style={{flex: 1, height: 180}}
           >
             <View>
-              <ThemedText className='font-medium'>Total</ThemedText>
-              <ThemedText className='text-2xl font-bold '>Rp. 123.000.000</ThemedText>
+              <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Total</ThemedText>
+              <ThemedText className={`text-2xl font-bold ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Rp. 123.000.000</ThemedText>
             </View>
             <View className='flex-1 items-end flex-row justify-between'>
               <View>
-                <ThemedText className='font-medium'>Number</ThemedText>
-                <ThemedText className='font-medium'>115 22 000 03</ThemedText>
+                <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Number</ThemedText>
+                <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>115 22 000 03</ThemedText>
               </View>
               <View className='items-end'>
-                <ThemedText className='font-medium'>Exp</ThemedText>
-                <ThemedText className='font-medium'>24/84</ThemedText>
+                <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Exp</ThemedText>
+                <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>24/84</ThemedText>
               </View>
             </View>
           </ImageBackground>
         </ThemedView>
         <ThemedView className='px-4 flex-row gap-4'>
           <ThemedView className={`${currentColor === "dark" ? "bg-[#141414]" : "bg-[#eee]"} rounded-lg p-4 flex-1`}>
-            <ThemedText className='text-green-400'>Income</ThemedText>
+            <ThemedText className='text-green-400 font-medium'>Income</ThemedText>
             <ThemedText>Rp. 20.000.000</ThemedText>          
           </ThemedView>
           <ThemedView className={`${currentColor === "dark" ? "bg-[#141414]" : "bg-[#eee]"} rounded-lg p-4 flex-1`}>
-            <ThemedText className='text-red-400'>Expenses</ThemedText>
+            <ThemedText className='text-red-400 font-medium'>Expenses</ThemedText>
             <ThemedText>Rp. 20.000.000</ThemedText>          
           </ThemedView>
         </ThemedView>

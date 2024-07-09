@@ -5,27 +5,29 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
 
 type Transaction = {
   date: Date;
   amount: number | string;
   category: string;
   description: string;
+  type: string;
 };
 
 export default function CreateTransScreen() {
-  const [transaction, setTransaction] = useState<Transaction>({
-    date: new Date(),
-    amount: 0,
-    category: '',
-    description: '',
-  });
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
   const currentColor = useColorScheme()
   const isAndroid = Platform.OS === 'android';
   const categoryTrans = ["Income", "Expenses"]
   const [currentCategoryTrans, setCurrentCategoryTrans] = useState(categoryTrans[0])
+  const [transaction, setTransaction] = useState<Transaction>({
+    date: new Date(),
+    amount: 0,
+    category: '',
+    description: '',
+    type: currentCategoryTrans
+  });
   const route = useRouter()
 
   const handleDateChange = (event: Event, selectedDate?: Date) => {
@@ -40,11 +42,11 @@ export default function CreateTransScreen() {
   const handleSubmit = () => {
     // Perform form submission logic here
     console.log('Submitting transaction:', transaction);
-  };
+  };            
 
   useEffect(() => {
-    console.log(transaction)
-  }, [transaction])
+    setTransaction((prev => ({ ...prev, type: currentCategoryTrans })))
+  }, [currentCategoryTrans])
 
   return (
     <ThemedView style={{ flex: 1 }}

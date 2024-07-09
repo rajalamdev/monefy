@@ -21,12 +21,12 @@ export default function TransactionScreen(){
             <ThemedView className="pt-10 flex-row items-center gap-4 px-4">
                 <Ionicons 
                     onPress={() => setDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))} 
-                    name="chevron-back-outline" size={25} color="white" 
+                    name="chevron-back-outline" size={25} color={`${currentColor === "dark" ? "white" : "black"}`} 
                 />
                 <ThemedText>{currentDate.toLocaleDateString("en-US",options)}</ThemedText>
                 <Ionicons 
                     onPress={() => setDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))} 
-                    name="chevron-forward" size={25} color="white"
+                    name="chevron-forward" size={25} color={`${currentColor === "dark" ? "white" : "black"}`}
                 />
             </ThemedView>
             <ThemedView className="px-4 mt-4">
