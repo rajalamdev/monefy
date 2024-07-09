@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1022753351364",
+    "project_id": "monefyapp-c16c3",
+    "storage_bucket": "monefyapp-c16c3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022753351364:android:e8ca86a6b96ac65e51cb91",
+        "android_client_info": {
+          "package_name": "com.rajalamdev.monefyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFsKJ2DTJyYDBUcrRq-QxPqw1QaXMnFyM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
