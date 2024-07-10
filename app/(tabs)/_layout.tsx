@@ -6,9 +6,10 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSegments } from 'expo-router';
 import { getAuth } from 'firebase/auth';
-import { FIREBASE_AUTH } from '@/firebaseConfig';
+import { FIREBASE_AUTH, firebaseConfig } from '@/firebaseConfig';
 import { useAppContext } from '@/context/AppContext';
-
+import 'firebase/firestore'
+import 'firebase/auth'
 
 export default function TabLayout() {
   const segments = useSegments()

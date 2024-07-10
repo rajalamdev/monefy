@@ -1,47 +1,81 @@
 import React, { useEffect, useState } from 'react';
-import { useColorScheme, View, Platform, TouchableOpacity } from 'react-native';
+import { useColorScheme, View, Platform, TouchableOpacity, Alert } from 'react-native';
 import { Button, TextInput, Text } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useNavigation } from 'expo-router';
+import { getAuth } from 'firebase/auth';
+import { FIREBASE_APP } from '@/firebaseConfig';
+import { createTransaction } from '../firebase/create';
+import { useAppContext } from '@/context/AppContext';
+import { Timestamp } from 'firebase/firestore';
 
 type Transaction = {
-  date: Date;
   amount: number | string;
   category: string;
   description: string;
   type: string;
+  createdAt: Date;
 };
 
 export default function CreateTransScreen() {
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
   const currentColor = useColorScheme()
   const isAndroid = Platform.OS === 'android';
-  const categoryTrans = ["Income", "Expenses"]
+  const categoryTrans = ["Income", "Expense"]
   const [currentCategoryTrans, setCurrentCategoryTrans] = useState(categoryTrans[0])
   const [transaction, setTransaction] = useState<Transaction>({
-    date: new Date(),
     amount: 0,
     category: '',
     description: '',
-    type: currentCategoryTrans
+    type: currentCategoryTrans,
+    createdAt: new Date(),
   });
+  const [loading, setLoading] = useState(false)
   const route = useRouter()
+  const user = getAuth(FIREBASE_APP).currentUser
+  const context = useAppContext()
 
   const handleDateChange = (event: Event, selectedDate?: Date) => {
     // setShowDateTimePicker(isAndroid ? true : false);
     setShowDateTimePicker(false); // Hide the DateTimePicker after picking a date
     if (selectedDate) {
-      setTransaction((prev) => ({ ...prev, date: selectedDate }));
+      setTransaction((prev) => ({ ...prev, createdAt: selectedDate }));
       setShowDateTimePicker(false);
     }
   };
 
-  const handleSubmit = () => {
-    // Perform form submission logic here
-    console.log('Submitting transaction:', transaction);
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      if (!user) return;
+      const addedTrans = await createTransaction({
+        category: transaction.category,
+        amount: parseInt(transaction.amount.toString()),
+        description: transaction.description,
+        type: transaction.type,
+        ownerId: user.uid,
+        createdAt: Timestamp.fromDate(transaction.createdAt),
+      })
+      const transObj = {
+        category: transaction.category,
+        amount: parseInt(transaction.amount.toString()),
+        description: transaction.description,
+        type: transaction.type,
+        ownerId: user.uid,
+        createdAt: Timestamp.fromDate(transaction.createdAt),
+        docId: addedTrans.id
+      }
+      context.setTransactions((prev:any) => [...prev, transObj])
+    } catch (error: any) {
+      Alert.alert("Error: ", error.message)
+    } finally {
+      setLoading(false);
+      Alert.alert("Successfully add transaction!")
+    }
   };            
 
   useEffect(() => {
@@ -67,7 +101,7 @@ export default function CreateTransScreen() {
       {showDateTimePicker && (
         <DateTimePicker
         testID="dateTimePicker"
-        value={transaction.date}
+        value={transaction.createdAt}
         mode="date"
         is24Hour={true}
         display={isAndroid ? 'default' : 'calendar'}
@@ -77,7 +111,7 @@ export default function CreateTransScreen() {
       <TouchableOpacity onPress={() => setShowDateTimePicker(true)} className='flex-row gap-2 mb-4 mt-4'>
         <Ionicons name='calendar-outline' color={`${currentColor === "dark" ? "white" : "black"}`} size={20} />
         <ThemedText>Date:</ThemedText>
-          <ThemedText>{transaction.date.toLocaleDateString("id-ID", {
+          <ThemedText>{transaction.createdAt.toLocaleDateString("id-ID", {
             day: "numeric",
             month: "2-digit",
             year: "2-digit",
@@ -137,8 +171,8 @@ export default function CreateTransScreen() {
         />
         </ThemedView>
       </ThemedView>
-      <TouchableOpacity onPress={handleSubmit} className='bg-green-400 py-3 px-4 rounded-lg'>
-        <ThemedText className='text-center text-black font-semibold'>Submit</ThemedText>
+      <TouchableOpacity disabled={loading} onPress={handleSubmit} className='bg-green-400 py-3 px-4 rounded-lg'>
+        <ThemedText className='text-center text-black font-semibold'>{loading ? "Loading..." : "Submit"}</ThemedText>
       </TouchableOpacity>
     </ThemedView>
   );

@@ -8,6 +8,8 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useState } from 'react';
+import { useAppContext } from '@/context/AppContext';
+import secondsToDate from '@/lib/secondsToDate';
 
 export default function StatsScreen() {
   const currentColor = useColorScheme()
@@ -16,11 +18,32 @@ export default function StatsScreen() {
     year: 'numeric',
     month: 'long',
   };
-  const data = [
-    { name: 'Food', amount: 50, color: 'yellow', legendFontColor: currentColor === "dark" ? "#fff" : "#000", legendFontSize: 12 },
-    { name: 'Transport', amount: 30, color: 'skyblue', legendFontColor: currentColor === "dark" ? "#fff" : "#000", legendFontSize: 12 },
-    { name: 'Entertainment', amount: 20, color: 'lightgreen', legendFontColor: currentColor === "dark" ? "#fff" : "#000", legendFontSize: 12 },
-  ];
+  const context = useAppContext()
+  // Filter transactions based on the selected month
+  const filteredTransactions = context.transactions?.filter((trans: TransactionInterface) => {
+    const transactionDate = new Date(trans.createdAt.seconds * 1000);
+    return transactionDate.getFullYear() === currentDate.getFullYear() && transactionDate.getMonth() === currentDate.getMonth();
+  });
+
+  const getRandomLightColor = () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  };
+
+  const dataPie = filteredTransactions.reduce((acc: any, curr: any) => {
+    if (!acc[curr.type]) {
+      const randomColor = getRandomLightColor();
+      acc[curr.type] = {name: curr.type, amount: curr.amount, color: randomColor, legendFontColor: currentColor === "dark" ? "#fff" : "#000", legendFontSize: 12 };
+    } else {
+      acc[curr.type].amount += curr.amount;
+    }
+    return acc;
+  }, {});
+
 
   return (
     <ScrollView className={`${currentColor === "dark" ? "bg-black" : "bg-white"}`}>
@@ -37,7 +60,7 @@ export default function StatsScreen() {
             />
         </ThemedView>
         <PieChart
-          data={data}
+          data={Object.values(dataPie)}
           width={Dimensions.get('window').width}
           height={200}
           chartConfig={{
@@ -55,26 +78,21 @@ export default function StatsScreen() {
       <ThemedView className={`px-6 pb-8  ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f9f9f9]"} rounded-3xl h-screen`}>
         <ThemedView className={`w-16 rounded-full mx-auto mt-6 mb-8 h-1 ${currentColor === "dark" ? "bg-white" : "bg-[#aaa]"}`}></ThemedView>
         <ThemedText type="title" className='mb-4'>Activity</ThemedText>
-        <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#222222]" : "bg-[#eee]"} py-4 px-4 rounded-lg mb-2`}>
-            <View className='flex-1'>
-                <ThemedText className="font-medium">Grocery</ThemedText>
-                <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>24 August 2004</ThemedText>
-                <ThemedText className={`pt-2 text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Desc: lorem lorem ipsum dolor amet dulur wkwkwkkw</ThemedText>
-            </View>
-            <View>
-                <ThemedText className='text-green-400'>+25.000</ThemedText>
-            </View>
-        </ThemedView>
-        <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#222222]" : "bg-[#eee]"} py-4 px-4 rounded-lg mb-2`}>
-            <View className='flex-1'>
-                <ThemedText className="font-medium">Grocery</ThemedText>
-                <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>24 August 2004</ThemedText>
-                <ThemedText className={`pt-2 text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Desc: lorem lorem ipsum dolor amet dulur wkwkwkkw</ThemedText>
-            </View>
-            <View>
-                <ThemedText className='text-green-400'>+25.000</ThemedText>
-            </View>
-        </ThemedView>
+        {filteredTransactions?.map((trans: TransactionInterface) => (
+            <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#222222]" : "bg-[#eee]"} py-4 px-4 rounded-lg mb-2`}>
+              <View className='flex-1'>
+                  <ThemedText className="font-medium">{trans.category}</ThemedText>
+                  <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>{secondsToDate(trans.createdAt.seconds)}</ThemedText>
+                  <ThemedText className={`pt-2 text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Desc: {trans.description === "" ? "-" : trans.description}</ThemedText>
+              </View>
+              <View>
+                  <ThemedText className={`${trans.type === "Income" ? "text-green-400" : "text-red-500"}`}>
+                      {trans.type === "Income" ? "+" : "-"}
+                      {trans.amount}
+                  </ThemedText>
+              </View>
+            </ThemedView>
+        ))}
         
         
       </ThemedView>

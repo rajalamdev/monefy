@@ -1,19 +1,32 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { FIREBASE_APP } from "@/firebaseConfig";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { getAuth } from "firebase/auth";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { ScrollView, TextInput, useColorScheme, View } from "react-native";
+import { fetchOnlyMyTransaction } from "../firebase/read";
+import { useAppContext } from "@/context/AppContext";
+import secondsToDate from "@/lib/secondsToDate";
 
 export default function TransactionScreen(){
     const [currentDate, setDate] = useState<any>(new Date())
     const currentColor = useColorScheme()
     const router = useRouter()
+    const user = getAuth(FIREBASE_APP).currentUser
+    const context = useAppContext()
 
     const options = {
         year: 'numeric',
         month: 'long',
       };
+
+       // Filter transactions based on the selected month
+    const filteredTransactions = context.transactions?.filter((trans: TransactionInterface) => {
+        const transactionDate = new Date(trans.createdAt.seconds * 1000);
+        return transactionDate.getFullYear() === currentDate.getFullYear() && transactionDate.getMonth() === currentDate.getMonth();
+    });
     return (
         <ThemedView style={{
             flex: 1
@@ -40,16 +53,21 @@ export default function TransactionScreen(){
             }}
             className="mt-4 px-4"
             >
-                 <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
+                 {filteredTransactions?.map((trans: TransactionInterface) => (
+                    <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
                     <View className='flex-1'>
-                        <ThemedText className="font-medium">Grocery</ThemedText>
-                        <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>24 August 2004</ThemedText>
-                        <ThemedText className={`pt-2 text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Desc: lorem lorem ipsum dolor amet dulur wkwkwkkw</ThemedText>
+                        <ThemedText className="font-medium">{trans.category}</ThemedText>
+                        <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>{secondsToDate(trans.createdAt.seconds)}</ThemedText>
+                        <ThemedText className={`pt-2 text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Desc: {trans.description === "" ? "-" : trans.description}</ThemedText>
                     </View>
                     <View>
-                        <ThemedText className='text-green-400'>+25.000</ThemedText>
+                        <ThemedText className={`${trans.type === "Income" ? "text-green-400" : "text-red-500"}`}>
+                            {trans.type === "Income" ? "+" : "-"}
+                            {trans.amount}
+                        </ThemedText>
                     </View>
                 </ThemedView>
+                 ))}
                 
             </ScrollView>
             <View className="absolute bottom-12 right-4">

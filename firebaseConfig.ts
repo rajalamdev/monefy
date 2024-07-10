@@ -10,7 +10,7 @@ import { getAnalytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyC9788uJUFhyMqFzeKbvwrUi50p1Yj311w",
   authDomain: "monefyapp-c16c3.firebaseapp.com",
   databaseURL: "https://monefyapp-c16c3-default-rtdb.asia-southeast1.firebasedatabase.app",

@@ -1,5 +1,4 @@
 import { Image, StyleSheet, Platform, ScrollView, Appearance, useColorScheme,ImageBackground, View, Text, TouchableOpacity } from 'react-native';
-
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
@@ -8,13 +7,46 @@ import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import { FIREBASE_AUTH } from '@/firebaseConfig';
+import secondsToDate from '@/lib/secondsToDate';
 
 export default function HomeScreen() {
   const currentColor = useColorScheme()
-  const filter = ["No Filter", "Monthly", "Yearly"]
+  const filter = ["Day", "Month", "Year", "None"]
   const [currentFilter, setCurrentFilter] = useState(filter[0])
   const [loading, setLoading] = useState(false)
   const context = useAppContext()
+  const sortedTransactions = context.transactions?.sort((a: any, b: any) => {
+    return Number(new Date(b.createdAt.toDate().getTime())) - Number(new Date(a.createdAt.toDate().getTime()));
+  }).slice(0, 3)
+
+  const getFilteredTransactions = () => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const currentDay = currentDate.getDate();
+
+    switch (currentFilter) {
+      case "Day":
+        return context.transactions?.filter((trans: any) => {
+          const transDate = new Date(trans.createdAt.toDate().getTime());
+          return transDate.getFullYear() === currentYear && transDate.getMonth() === currentMonth && transDate.getDate() === currentDay;
+        });
+      case "Month":
+        return context.transactions?.filter((trans: any) => {
+          const transDate = new Date(trans.createdAt.toDate().getTime());
+          return transDate.getFullYear() === currentYear && transDate.getMonth() === currentMonth;
+        });
+      case "Year":
+        return context.transactions?.filter((trans: any) => {
+          const transDate = new Date(trans.createdAt.toDate().getTime());
+          return transDate.getFullYear() === currentYear;
+        });
+      default:
+        return context.transactions;
+    }
+  };
+
+  const filteredTransactions = getFilteredTransactions();
 
   return (
     <ScrollView style={{
@@ -60,7 +92,7 @@ export default function HomeScreen() {
         >
           <View>
             <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Total</ThemedText>
-            <ThemedText className={`text-2xl font-bold ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Rp. 123.000.000</ThemedText>
+            <ThemedText className={`text-2xl font-bold ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Rp. {filteredTransactions?.reduce((total: any, trans: any) => total + (trans.type === "Income" ? trans.amount : -trans.amount), 0)}</ThemedText>
           </View>
           <View className='flex-1 items-end flex-row justify-between'>
             <View>
@@ -79,39 +111,34 @@ export default function HomeScreen() {
           <Ionicons name='card-outline' size={25} color={currentColor === "dark" ? "#4ade80" : "#4ade80"} />
           <View className='pl-2'>
             <ThemedText className='font-medium'>Income</ThemedText>
-            <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Rp. 20.000.000</ThemedText>          
+            <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Rp. {filteredTransactions?.reduce((total: any, trans: any) => total + (trans.type === "Income" ? trans.amount : 0), 0)}</ThemedText>          
           </View>
         </ThemedView>
         <ThemedView className={`${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} rounded-lg p-4 flex-1 flex-row items-center`}>
           <Ionicons name='wallet-outline' size={25} color={currentColor === "dark" ? "red" : "#ef4444"} />
           <View className='pl-2'>
             <ThemedText className='font-medium'>Expense</ThemedText>
-            <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Rp. 20.000.000</ThemedText>          
+            <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Rp. {filteredTransactions?.reduce((total: any, trans: any) => total + (trans.type === "Expense" ? trans.amount : 0), 0)}</ThemedText>          
           </View>
         </ThemedView>
       </ThemedView>
       <ThemedView className='px-4 pt-8'>
         <ThemedText className='font-medium mb-2'>Recent Activity</ThemedText>
-        <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
-            <View className='flex-1'>
-                <ThemedText className="font-medium">Grocery</ThemedText>
-                <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>24 August 2004</ThemedText>
-                <ThemedText className={`pt-2 text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Desc: lorem lorem ipsum dolor amet dulur wkwkwkkw</ThemedText>
-            </View>
-            <View>
-                <ThemedText className='text-green-400'>+25.000</ThemedText>
-            </View>
-        </ThemedView>
-        <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
+        {sortedTransactions?.map((trans: TransactionInterface) => (
+            <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
               <View className='flex-1'>
-                  <ThemedText className="font-medium">Grocery</ThemedText>
-                  <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>24 August 2004</ThemedText>
-                  <ThemedText className={`pt-2 text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Desc: lorem lorem ipsum dolor amet dulur wkwkwkkw</ThemedText>
+                  <ThemedText className="font-medium">{trans.category}</ThemedText>
+                  <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>{secondsToDate(trans.createdAt.seconds)}</ThemedText>
+                  <ThemedText className={`pt-2 text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Desc: {trans.description === "" ? "-" : trans.description}</ThemedText>
               </View>
               <View>
-                  <ThemedText className='text-green-400'>+25.000</ThemedText>
+                  <ThemedText className={`${trans.type === "Income" ? "text-green-400" : "text-red-500"}`}>
+                      {trans.type === "Income" ? "+" : "-"}
+                      {trans.amount}
+                  </ThemedText>
               </View>
-          </ThemedView>
+            </ThemedView>
+        ))}
       </ThemedView>
     </ScrollView>
   );
