@@ -1,11 +1,13 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useRouter } from "expo-router";
+import { getAuth } from "firebase/auth";
+import { useEffect } from "react";
 import { Image, Text, TouchableOpacity } from "react-native";
 
 export default function WelcomeScreen(){
     const router = useRouter()
-
+ 
     return (
         <ThemedView>
             <ThemedView style={{

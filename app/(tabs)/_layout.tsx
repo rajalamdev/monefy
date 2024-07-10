@@ -1,16 +1,50 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs, useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSegments } from 'expo-router';
+import { getAuth } from 'firebase/auth';
+import { FIREBASE_AUTH } from '@/firebaseConfig';
+import { useAppContext } from '@/context/AppContext';
 
 
 export default function TabLayout() {
   const segments = useSegments()
   const colorScheme = useColorScheme();
   const pagesToHideTabBarWhenFocused = ['report', 'index', undefined, "login", "register"]
+  const router = useRouter();
+  const context = useAppContext()
+
+  const protectedPage = ["index", "login", "register", undefined]
+  const loginResister = ["login", "register"]
+
+  useEffect(() => {
+    if (protectedPage.includes(segments[1])){
+      FIREBASE_AUTH.onAuthStateChanged((user) => {
+        if (!user) {
+          if (!loginResister.includes(segments[1])){
+            router.replace("/");
+          }
+        } else {
+          router.replace("/home")
+          context.setCurrentUser(user)
+        }
+      });
+    }
+  }, [segments])
+
+  useEffect(() => {
+    FIREBASE_AUTH.onAuthStateChanged((user) => {
+      if (!user) {
+        router.replace("/");
+      } else {
+        router.replace("/home")
+        context.setCurrentUser(user)
+      }
+    });
+  }, [])
   
   return (
     <Tabs

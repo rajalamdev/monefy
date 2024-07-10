@@ -5,77 +5,104 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAppContext } from '@/context/AppContext';
+import { FIREBASE_AUTH } from '@/firebaseConfig';
 
 export default function HomeScreen() {
   const currentColor = useColorScheme()
   const filter = ["No Filter", "Monthly", "Yearly"]
   const [currentFilter, setCurrentFilter] = useState(filter[0])
+  const [loading, setLoading] = useState(false)
+  const context = useAppContext()
 
   return (
-    <ThemedView style={{
+    <ScrollView style={{
+      // height: "100%",
       flex: 1,
-      justifyContent: "center",
-    }}>
-      <ScrollView style={{
-        // height: "100%",
-        flex: 1,
+    }}
+    >
+      <ThemedView className='flex-row justify-between px-4 pt-12 pb-8  items-center' style={{
+        flex: 1
       }}>
-        <ThemedView className='flex-row justify-between px-4 pt-12 pb-8  items-center' style={{
-          flex: 1
-        }}>
-          <Ionicons onPress={() => Appearance.setColorScheme(currentColor === "dark" ? "light" : "dark")} name='moon-outline' size={25} color={currentColor === "dark" ? "white" : "black"} />
-          <ThemedText>Hello, Raj Alam!</ThemedText>
-          <Ionicons name='notifications-outline' size={25} color={currentColor === "dark" ? "white" : "black"} />
-        </ThemedView>
-        <ThemedView className='flex-row px-4 pb-4 gap-2'>
-          {filter.map(item => (
-            <TouchableOpacity onPress={() => setCurrentFilter(item)} className={`${item === currentFilter ? "bg-green-400" : currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} py-2 px-4 flex-1 items-center rounded-lg`}>
-              <ThemedText className={`${item === currentFilter && "text-black"} text-sm`}>{item}</ThemedText>
-            </TouchableOpacity>
-          ))}
-        </ThemedView>
-        <ThemedView className='px-4 pb-4'>
-          <ImageBackground source={require("@/assets/images/cards.png")}
-            resizeMode="cover"
-            className='rounded-lg overflow-hidden p-3'
-            style={{flex: 1, height: 180}}
-          >
+        {loading ? (
+          <ThemedText>Log Out...</ThemedText>
+        ) : (
+          <>
+            <Ionicons onPress={() => Appearance.setColorScheme(currentColor === "dark" ? "light" : "dark")} name='moon-outline' size={25} color={currentColor === "dark" ? "white" : "black"} />
+            <ThemedText>{context.currentUser?.email}</ThemedText>
+            <Ionicons onPress={() => {
+              try {
+                setLoading(true)
+                FIREBASE_AUTH.signOut()
+              } catch (error) {
+                console.log(error)
+              } finally {
+                setLoading(false)
+              }}} 
+              name='log-out-outline' size={30} color={currentColor === "dark" ? "red" : "red"} 
+            />
+          </>
+        )}
+      </ThemedView>
+      <ThemedView className='flex-row px-4 pb-4 gap-2'>
+        {filter.map(item => (
+          <TouchableOpacity onPress={() => setCurrentFilter(item)} className={`${item === currentFilter ? "bg-green-400" : currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} py-2 px-4 flex-1 items-center rounded-lg`}>
+            <ThemedText className={`${item === currentFilter && "text-black"} text-sm`}>{item}</ThemedText>
+          </TouchableOpacity>
+        ))}
+      </ThemedView>
+      <ThemedView className='px-4 pb-4'>
+        <ImageBackground source={require("@/assets/images/cards.png")}
+          resizeMode="cover"
+          className='rounded-lg overflow-hidden p-3'
+          style={{flex: 1, height: 180}}
+        >
+          <View>
+            <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Total</ThemedText>
+            <ThemedText className={`text-2xl font-bold ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Rp. 123.000.000</ThemedText>
+          </View>
+          <View className='flex-1 items-end flex-row justify-between'>
             <View>
-              <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Total</ThemedText>
-              <ThemedText className={`text-2xl font-bold ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Rp. 123.000.000</ThemedText>
+              <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Number</ThemedText>
+              <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>115 22 000 03</ThemedText>
             </View>
-            <View className='flex-1 items-end flex-row justify-between'>
-              <View>
-                <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Number</ThemedText>
-                <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>115 22 000 03</ThemedText>
-              </View>
-              <View className='items-end'>
-                <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Exp</ThemedText>
-                <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>24/84</ThemedText>
-              </View>
+            <View className='items-end'>
+              <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>Exp</ThemedText>
+              <ThemedText className={`font-medium ${currentColor === "dark" ? "text-white" : "text-[#333]"}`}>24/84</ThemedText>
             </View>
-          </ImageBackground>
+          </View>
+        </ImageBackground>
+      </ThemedView>
+      <ThemedView className='px-4 flex-row gap-4'>
+        <ThemedView className={`${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} rounded-lg p-4 flex-1 flex-row items-center`}>
+          <Ionicons name='card-outline' size={25} color={currentColor === "dark" ? "#4ade80" : "#4ade80"} />
+          <View className='pl-2'>
+            <ThemedText className='font-medium'>Income</ThemedText>
+            <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Rp. 20.000.000</ThemedText>          
+          </View>
         </ThemedView>
-        <ThemedView className='px-4 flex-row gap-4'>
-          <ThemedView className={`${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} rounded-lg p-4 flex-1 flex-row items-center`}>
-            <Ionicons name='card-outline' size={25} color={currentColor === "dark" ? "#4ade80" : "#4ade80"} />
-            <View className='pl-2'>
-              <ThemedText className='font-medium'>Income</ThemedText>
-              <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Rp. 20.000.000</ThemedText>          
-            </View>
-          </ThemedView>
-          <ThemedView className={`${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} rounded-lg p-4 flex-1 flex-row items-center`}>
-            <Ionicons name='wallet-outline' size={25} color={currentColor === "dark" ? "red" : "#ef4444"} />
-            <View className='pl-2'>
-              <ThemedText className='font-medium'>Expense</ThemedText>
-              <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Rp. 20.000.000</ThemedText>          
-            </View>
-          </ThemedView>
+        <ThemedView className={`${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} rounded-lg p-4 flex-1 flex-row items-center`}>
+          <Ionicons name='wallet-outline' size={25} color={currentColor === "dark" ? "red" : "#ef4444"} />
+          <View className='pl-2'>
+            <ThemedText className='font-medium'>Expense</ThemedText>
+            <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Rp. 20.000.000</ThemedText>          
+          </View>
         </ThemedView>
-        <ThemedView className='px-4 pt-8'>
-          <ThemedText className='font-medium mb-2'>Recent Activity</ThemedText>
-          <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
+      </ThemedView>
+      <ThemedView className='px-4 pt-8'>
+        <ThemedText className='font-medium mb-2'>Recent Activity</ThemedText>
+        <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
+            <View className='flex-1'>
+                <ThemedText className="font-medium">Grocery</ThemedText>
+                <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>24 August 2004</ThemedText>
+                <ThemedText className={`pt-2 text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Desc: lorem lorem ipsum dolor amet dulur wkwkwkkw</ThemedText>
+            </View>
+            <View>
+                <ThemedText className='text-green-400'>+25.000</ThemedText>
+            </View>
+        </ThemedView>
+        <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
               <View className='flex-1'>
                   <ThemedText className="font-medium">Grocery</ThemedText>
                   <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>24 August 2004</ThemedText>
@@ -85,18 +112,7 @@ export default function HomeScreen() {
                   <ThemedText className='text-green-400'>+25.000</ThemedText>
               </View>
           </ThemedView>
-          <ThemedView className={`flex-row ${currentColor === "dark" ? "bg-[#141414]" : "bg-[#f6f6f6]"} px-4 py-4 rounded-lg mb-2`}>
-                <View className='flex-1'>
-                    <ThemedText className="font-medium">Grocery</ThemedText>
-                    <ThemedText className={`text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>24 August 2004</ThemedText>
-                    <ThemedText className={`pt-2 text-sm ${currentColor === "dark" ? "text-[#A6A6A6]" : "text-[#666]"}`}>Desc: lorem lorem ipsum dolor amet dulur wkwkwkkw</ThemedText>
-                </View>
-                <View>
-                    <ThemedText className='text-green-400'>+25.000</ThemedText>
-                </View>
-            </ThemedView>
-        </ThemedView>
-      </ScrollView>
-    </ThemedView>
+      </ThemedView>
+    </ScrollView>
   );
 }
