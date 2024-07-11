@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useColorScheme, View, Platform, TouchableOpacity, Alert } from 'react-native';
+import { useColorScheme, View, Platform, TouchableOpacity, Alert} from 'react-native';
 import { Button, TextInput, Text } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedView } from '@/components/ThemedView';
@@ -33,6 +33,7 @@ export default function CreateTransScreen() {
     type: currentCategoryTrans,
     createdAt: new Date(),
   });
+  
   const [loading, setLoading] = useState(false)
   const route = useRouter()
   const user = getAuth(FIREBASE_APP).currentUser
@@ -49,6 +50,11 @@ export default function CreateTransScreen() {
 
 
   const handleSubmit = async () => {
+    if (transaction.amount === 0 || transaction.category.trim() === '') {
+      Alert.alert('Error', 'Please fill in all required fields correctly.');
+      return;
+    }
+
     try {
       setLoading(true);
       if (!user) return;
@@ -75,6 +81,13 @@ export default function CreateTransScreen() {
     } finally {
       setLoading(false);
       Alert.alert("Successfully add transaction!")
+      setTransaction({
+        amount: 0,
+        category: '',
+        description: '',
+        type: currentCategoryTrans,
+        createdAt: new Date(),
+      })
     }
   };            
 
@@ -164,7 +177,7 @@ export default function CreateTransScreen() {
             setTransaction((prev) => ({ ...prev, description }))
           }
           keyboardType="default"
-          placeholder="Description" 
+          placeholder="Description (optional)" 
           multiline
           className={`pl-2 flex-1 h-full ${currentColor === "dark" ? "text-white" : "text-black"}`}
           placeholderTextColor={`${currentColor == "dark" ? "#A6A6A6" : "#A6A6A6"}`}
